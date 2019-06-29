@@ -2,6 +2,7 @@ import 'package:dribble_events/internal/ui_colors.dart';
 import 'package:dribble_events/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PageController _pageController;
+  Future<dynamic> _dateFormattingIntialized;
 
   @override
   void initState() {
@@ -17,6 +19,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController = PageController(
       viewportFraction: 1.0,
     );
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _dateFormattingIntialized = initializeDateFormatting(
+        Localizations.localeOf(context).languageCode, null);
   }
 
   @override
@@ -77,12 +87,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                         bottomStart: Radius.circular(15.0),
                                       ),
                                     ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text("14"),
-                                        Text("MAR"),
-                                      ],
-                                    ),
+                                    child: FutureBuilder<Object>(
+                                        future: _dateFormattingIntialized,
+                                        builder: (context, snapshot) {
+                                          return Column(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: <Widget>[
+                                              Text(
+                                                DateFormat(
+                                                    'MMM',
+                                                    Localizations.localeOf(
+                                                        context)
+                                                        .languageCode)
+                                                    .format(
+                                                  Event.getMockEvents()[index]
+                                                      .dateTime,
+                                                ).toUpperCase(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .title
+                                                    .copyWith(
+                                                  color: UIColors.color5,
+                                                ),
+                                              ),
+                                              Text(
+                                                DateFormat(
+                                                        'dd',
+                                                        Localizations.localeOf(
+                                                                context)
+                                                            .languageCode)
+                                                    .format(
+                                                  Event.getMockEvents()[index]
+                                                      .dateTime,
+                                                ),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .title
+                                                    .copyWith(
+                                                      color: UIColors.color5,
+                                                    ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
                                   ),
                                 ),
                                 PositionedDirectional(
