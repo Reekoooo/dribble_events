@@ -2,6 +2,7 @@ import 'package:dribble_events/internal/ui_colors.dart';
 import 'package:dribble_events/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/number_symbols_data.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Drible Events',
       supportedLocales: [Locale('en'),Locale('ar')],
+      //supportedLocales: numberFormatSymbols.keys.map((key)=> Locale(key)).toList(),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
       ],

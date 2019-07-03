@@ -12,6 +12,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PageController _pageController;
   Future<dynamic> _dateFormattingIntialized;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  PersistentBottomSheetController _bottomSheetController;
 
   @override
   void initState() {
@@ -19,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController = PageController(
       viewportFraction: 1.0,
     );
-
   }
 
   @override
@@ -32,203 +33,262 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Events"),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {},
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
+      key: _scaffoldKey,
+      body: Scaffold(
+        appBar: AppBar(
+          title: Text("Events"),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.menu),
             onPressed: () {},
-          )
-        ],
-      ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: Event.getMockEvents().length,
-                itemBuilder: (context, index) => Container(
-                  child: Container(
-                    padding: EdgeInsets.all(15.0),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadiusDirectional.only(
-                      topStart: Radius.circular(15.0),
-                      topEnd: Radius.circular(15.0),
-                    )),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: <Widget>[
-                                Image.network(
-                                  Event.getMockEvents()[index].imageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                                PositionedDirectional(
-                                  end: 0.0,
-                                  top: 0.0,
-                                  width: 70.0,
-                                  height: 70.0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: UIColors.color3,
-                                      borderRadius:
-                                          BorderRadiusDirectional.only(
-                                        bottomStart: Radius.circular(15.0),
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {},
+            )
+          ],
+        ),
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: Event.getMockEvents().length,
+                  itemBuilder: (context, index) => Container(
+                    child: Container(
+                      padding: EdgeInsets.all(15.0),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadiusDirectional.only(
+                        topStart: Radius.circular(15.0),
+                        topEnd: Radius.circular(15.0),
+                      )),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: <Widget>[
+                                  Image.network(
+                                    Event.getMockEvents()[index].imageUrl,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  PositionedDirectional(
+                                    end: 0.0,
+                                    top: 0.0,
+                                    // width: 70.0,
+                                    // height: 70.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: UIColors.color3,
+                                        borderRadius:
+                                            BorderRadiusDirectional.only(
+                                          bottomStart: Radius.circular(15.0),
+                                        ),
+                                      ),
+                                      child: FutureBuilder<Object>(
+                                          future: _dateFormattingIntialized,
+                                          builder: (context, snapshot) {
+                                            return Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: <Widget>[
+                                                Text(
+                                                  DateFormat(
+                                                          'MMM',
+                                                          Localizations
+                                                                  .localeOf(
+                                                                      context)
+                                                              .languageCode)
+                                                      .format(
+                                                        Event.getMockEvents()[
+                                                                index]
+                                                            .dateTime,
+                                                      )
+                                                      .toUpperCase(),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .title
+                                                      .copyWith(
+                                                        color: UIColors.color5,
+                                                      ),
+                                                ),
+                                                Text(
+                                                  DateFormat(
+                                                          'dd',
+                                                          Localizations
+                                                                  .localeOf(
+                                                                      context)
+                                                              .languageCode)
+                                                      .format(
+                                                    Event.getMockEvents()[index]
+                                                        .dateTime,
+                                                  ),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .title
+                                                      .copyWith(
+                                                        color: UIColors.color5,
+                                                      ),
+                                                ),
+                                              ],
+                                            );
+                                          }),
+                                    ),
+                                  ),
+                                  PositionedDirectional(
+                                    start: 0.0,
+                                    bottom: 0.0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        Event.getMockEvents()[index].title,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .display3
+                                            .copyWith(
+                                              color: UIColors.color5,
+                                              backgroundColor:
+                                                  Colors.black.withOpacity(0.3),
+                                            ),
                                       ),
                                     ),
-                                    child: FutureBuilder<Object>(
-                                        future: _dateFormattingIntialized,
-                                        builder: (context, snapshot) {
-                                          return Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Text(
-                                                DateFormat(
-                                                    'MMM',
-                                                    Localizations.localeOf(
-                                                        context)
-                                                        .languageCode)
-                                                    .format(
-                                                  Event.getMockEvents()[index]
-                                                      .dateTime,
-                                                ).toUpperCase(),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .title
-                                                    .copyWith(
-                                                  color: UIColors.color5,
-                                                ),
-                                              ),
-                                              Text(
-                                                DateFormat(
-                                                        'dd',
-                                                        Localizations.localeOf(
-                                                                context)
-                                                            .languageCode)
-                                                    .format(
-                                                  Event.getMockEvents()[index]
-                                                      .dateTime,
-                                                ),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .title
-                                                    .copyWith(
-                                                      color: UIColors.color5,
-                                                    ),
-                                              ),
-                                            ],
-                                          );
-                                        }),
                                   ),
-                                ),
-                                PositionedDirectional(
-                                  start: 0.0,
-                                  bottom: 0.0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      Event.getMockEvents()[index].title,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .display3
-                                          .copyWith(
-                                            color: UIColors.color5,
-                                            backgroundColor:
-                                                Colors.black.withOpacity(0.3),
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                ),
-                                child: Text(
-                                  Event.getMockEvents()[index].shortDescription,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline
-                                      .copyWith(
-                                        color: UIColors.color6,
-                                      ),
-                                ),
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.only(
-                                      end: 8.0,
-                                    ),
-                                    child: Icon(
-                                      Icons.location_on,
-                                      color: UIColors.color3,
-                                      size: 20.0,
-                                    ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
                                   ),
-                                  Text(
-                                    Event.getMockEvents()[index].location,
+                                  child: Text(
+                                    Event.getMockEvents()[index]
+                                        .shortDescription,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .body2
+                                        .headline
                                         .copyWith(
                                           color: UIColors.color6,
                                         ),
                                   ),
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.only(
+                                        end: 8.0,
+                                      ),
+                                      child: Icon(
+                                        Icons.location_on,
+                                        color: UIColors.color3,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                                    Text(
+                                      Event.getMockEvents()[index].location,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .body2
+                                          .copyWith(
+                                            color: UIColors.color6,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Material(
+                color: UIColors.color3,
+                borderRadius: BorderRadius.circular(15.0),
+                child: InkWell(
+                  onTap: () {
+                    final top = MediaQuery.of(context).viewPadding.top;
+                    print(top);
+                    _bottomSheetController = _scaffoldKey.currentState
+                        .showBottomSheet<Null>((BuildContext context) {
+                      return Material(
+                        color: UIColors.color4,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: top),
+                          child: SizedBox(
+                            height: 250.0,
+                            child: Scaffold(
+                              appBar: AppBar(
+                                title: Text(Event.getMockEvents()[
+                                        _pageController.page.toInt()]
+                                    .title),
+                                actions: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: () {
+
+                                      _bottomSheetController.close();
+                                    },
+                                  ),
                                 ],
+                                automaticallyImplyLeading: false,
                               ),
-                            ],
+                              body: Container(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text(
+                                          'Persistent header for bottom bar!',
+                                          textAlign: TextAlign.left,
+                                        )),
+                                    Text(
+                                      'Then here there will likely be some other content '
+                                      'which will be displayed within the bottom bar',
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ],
+                      );
+                    });
+                  },
+                  splashColor: Theme.of(context).splashColor,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
+                        "Tickets",
+                        style: Theme.of(context).textTheme.headline.copyWith(
+                              color: UIColors.color6,
+                            ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Material(
-              color: UIColors.color3,
-              borderRadius: BorderRadius.circular(15.0),
-              child: InkWell(
-                onTap: () {},
-                splashColor: Theme.of(context).splashColor,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Text(
-                      "Tickets",
-                      style: Theme.of(context).textTheme.headline.copyWith(
-                            color: UIColors.color6,
-                          ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
